@@ -3,12 +3,12 @@
 r"""NHANES：三个模型 × 四种不平衡方法（Python 3.10+）。
 
 PyCharm 使用方法：
-1. 将本 .py 文件与 CSV 放在同一个文件夹。
+1. 保持仓库的 scripts/、data/ 和 results/ 目录结构，将分析 CSV 放入 data/。
 2. 在 PyCharm 当前解释器中安装 numpy、pandas、scikit-learn>=1.3、matplotlib、xgboost。
 3. 右键本文件 → Run，或点击绿色运行按钮。无需设置运行参数。
-4. 结果保存在本文件所在目录下的 results_balance_hba1c 文件夹。
-只需修改下面“用户设置”中的变量。DATA_FILE 也支持绝对路径，例如
-r"C:\Users\YourName\Desktop\nhanes_diabetes_2021_2023_verified.csv"。
+4. 结果保存在仓库 results/aim1/ 下新建的时间戳文件夹。
+下面“用户设置”中的相对路径均以仓库根目录为准，不依赖运行时的工作目录。
+DATA_FILE 和 OUTPUT_FOLDER 也支持显式指定绝对路径。
 本文件独立运行，不依赖之前的命令行版脚本。
 
 本版适配用户提供的 verified CSV：仅读取该文件，不修改或重新保存CSV。
@@ -20,7 +20,7 @@ audit中明确计数。未用原始XPT独立验证来源；不等于已确认没
 仅使用WTPH2YR，不回退到MEC权重。另排除孕妇（与 Aim 3 统一）。按本次上传数据应得到5058人/128阳性。
 每次输出保存在新建的时间戳子目录，避免覆盖之前结果。
 
-主要输出（默认 results_balance_hba1c/）：
+主要输出（默认 results/aim1/<时间戳>/）：
   data_audit.json：实际使用的标签、权重、特征、样本数、软件版本。
   fold_metrics.csv：每个外层折、每个组合的表现及内部选中的参数/阈值。
   comparison.csv：外层平均指标、折间标准差（不是标准误/置信区间）。
@@ -48,8 +48,8 @@ https://xgboost.readthedocs.io/en/stable/python/python_api.html
 """
 
 # ==================== 用户设置：通常只需要修改这里 ====================
-DATA_FILE = "nhanes_diabetes_2021_2023_verified.csv"  # CSV 文件名，或 r"C:\...\data.csv"
-OUTPUT_FOLDER = "results_balance_hba1c"            # 结果文件夹，可填写绝对路径
+DATA_FILE = "data/nhanes_diabetes_2021_2023_verified.csv"  # 相对于仓库根目录
+OUTPUT_FOLDER = "results/aim1"                           # 每次运行新建时间戳子目录
 MODELS = ["lr", "rf", "xgb"]                  # lr逻辑回归，rf随机森林，xgb XGBoost
 QUICK_RUN = False                            # True=快速检查；False=完整比较
 OUTER_FOLDS = 5
@@ -69,6 +69,8 @@ import hashlib
 from datetime import datetime
 from pathlib import Path
 import warnings
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 import numpy as np
 import pandas as pd
@@ -96,23 +98,32 @@ REDUNDANT = {'age_group_brfss', 'education_code', 'general_health_label',
              'pregnant'}   # 孕妇已整体排除，该列不再作为预测变量
 
 
+def recorded_path(path):
+    """仓库内路径在审计中保存为相对路径；外部绝对路径保持其实际含义。"""
+    resolved = Path(path).resolve()
+    try:
+        return resolved.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return resolved.as_posix()
+
+
 def settings_to_args():
-    """所有相对路径以脚本所在目录为准，不依赖PyCharm的Working directory。"""
-    base = Path(__file__).resolve().parent
+    """所有相对路径以仓库根目录为准，不依赖PyCharm的Working directory。"""
+    base = REPO_ROOT
     data_path = Path(DATA_FILE).expanduser()
     if not data_path.is_absolute():
         data_path = base / data_path
     if not data_path.is_file():
         raise FileNotFoundError(
             f"找不到数据文件：{data_path}\n"
-            "请把 CSV 与本脚本放在同一个文件夹，或修改顶部 DATA_FILE 为实际完整路径。"
+            "请将分析 CSV 放入仓库 data/，或修改顶部 DATA_FILE。相对路径以仓库根目录为准。"
         )
     output_path = Path(OUTPUT_FOLDER).expanduser()
     if not output_path.is_absolute():
         output_path = base / output_path
     if not MODELS or any(m not in ['lr', 'rf', 'xgb'] for m in MODELS):
         raise ValueError('MODELS 必须包含 lr、rf、xgb 中的至少一个模型。')
-    return SimpleNamespace(csv=str(data_path), out=str(output_path),
+    return SimpleNamespace(csv=str(data_path.resolve()), out=str(output_path.resolve()),
                            target=TARGET_COLUMN, weight_col=WEIGHT_COLUMN,
                            models=list(MODELS),
                            outer_folds=OUTER_FOLDS, inner_folds=INNER_FOLDS,
@@ -215,7 +226,10 @@ def load_data(args):
                  medication_note='No reported treatment; non-diagnosed insulin NA retained as structural skip. DIQ010=2/pills NA retained with unverified DIQ160 skip when DIQ160 unavailable.',
                  oral_medication_skip_not_independently_checkable_n=unresolved_skip,
                  no_labels_or_source_rows_written=True,
-                 options=vars(args), versions={m:importlib.metadata.version(m) for m in
+                 path_base='repository_root',
+                 options={**vars(args), 'csv': recorded_path(args.csv),
+                          'out': recorded_path(args.out)},
+                 versions={m:importlib.metadata.version(m) for m in
                     ['numpy','pandas','scikit-learn','matplotlib']})
     return df, X, y, w, groups, cats, audit
 
@@ -391,6 +405,7 @@ def main():
     out = Path(args.out) / datetime.now().strftime('%Y%m%d_%H%M%S_%f')
     out.mkdir(parents=True, exist_ok=False)
     df, X, y, w, groups, cats, audit = load_data(args)
+    audit['output_directory'] = recorded_path(out)
     if 'xgb' in args.models:
         audit['versions']['xgboost'] = importlib.metadata.version('xgboost')
     (out / 'data_audit.json').write_text(json.dumps(audit, ensure_ascii=False, indent=2), encoding='utf-8')

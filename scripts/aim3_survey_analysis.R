@@ -10,10 +10,10 @@
 #   第 5 步  敏感性分析：删除收入未报告者，重做模型 2
 #   第 6 步  补充分析：在所有糖尿病患者中，未诊断所占比例
 #
-# ---------------- 怎么运行（不用改任何路径）----------------
-# 代码会根据“自己所在的位置”自动找数据：
-#   仓库结构：scripts/ 下的代码 → 读 data/…_verified.csv → 结果写到 reports/aim3/
-#   单独文件夹：代码和 CSV 放在同一个文件夹 → 结果写到同文件夹下的 results_aim3/
+# ---------------- 怎么运行 ----------------
+# 保持仓库 scripts/、data/ 和 results/ 目录结构。
+# 相对路径以仓库根目录为准，不依赖 R 的工作目录。
+# 默认读取 data/…_verified.csv；结果写到 results/aim3/ 的新建运行子目录。
 # 缺少 survey 包会自动安装。
 #
 # 运行方式任选一种：
@@ -29,6 +29,9 @@
 #   regression_models.csv              第 4、5 步
 #   supplementary_among_diabetes.csv   第 6 步
 # =====================================================================
+
+DATA_FILE <- "data/nhanes_diabetes_2021_2023_verified.csv"
+OUTPUT_FOLDER <- "results/aim3"
 
 # ---- 缺少 survey 包时自动安装（不会弹出选镜像的窗口）----
 if (!requireNamespace("survey", quietly = TRUE)) {
@@ -53,25 +56,22 @@ script_dir <- function() {
   getwd()
 }
 HERE <- script_dir()
-if (dir.exists(file.path(HERE, "..", "data"))) {                      # 在仓库的 scripts/ 里
-  DATA_DIR <- normalizePath(file.path(HERE, "..", "data"))
-  OUT      <- file.path(dirname(DATA_DIR), "reports", "aim3")
-} else {                                                              # 代码和数据在同一文件夹
-  DATA_DIR <- HERE
-  OUT      <- file.path(HERE, "results_aim3")
+REPO_ROOT <- normalizePath(file.path(HERE, ".."), winslash = "/", mustWork = TRUE)
+resolve_path <- function(path) {
+  path <- chartr("\\", "/", path.expand(path))
+  if (!grepl("^([A-Za-z]:/|/)", path)) path <- file.path(REPO_ROOT, path)
+  path
 }
 
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) >= 1) {
-  DATA <- args[1]
-} else {
-  cand <- file.path(DATA_DIR, c("nhanes_diabetes_2021_2023_verified.csv",
-                                "nhanes_diabetes_2021_2023.csv"))
-  DATA <- cand[file.exists(cand)][1]
-  if (is.na(DATA)) stop("找不到数据文件，请把 nhanes_diabetes_2021_2023_verified.csv 放到: ", DATA_DIR)
-}
+DATA <- resolve_path(if (length(args) >= 1) args[1] else DATA_FILE)
+if (!file.exists(DATA)) stop("找不到分析数据文件: ", DATA)
 cat("读取数据:", normalizePath(DATA), "\n")
-dir.create(OUT, recursive = TRUE, showWarnings = FALSE)
+OUT_BASE <- resolve_path(OUTPUT_FOLDER)
+dir.create(OUT_BASE, recursive = TRUE, showWarnings = FALSE)
+OUT <- tempfile(pattern = paste0(format(Sys.time(), "%Y%m%d_%H%M%S"), "_"),
+                tmpdir = OUT_BASE)
+if (!dir.create(OUT)) stop("无法创建结果目录: ", OUT)
 
 d <- read.csv(DATA, stringsAsFactors = FALSE)
 

@@ -12,4 +12,6 @@ Thumbs.db
 results_balance_hba1c/
 scripts/results_balance_hba1c/
 reports/
+/results/aim1/*/
+/results/aim3/*/
 ~$*.docx

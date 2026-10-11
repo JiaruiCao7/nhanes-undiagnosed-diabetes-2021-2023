@@ -137,6 +137,7 @@
   "medication_note": "No reported treatment; non-diagnosed insulin NA retained as structural skip. DIQ010=2/pills NA retained with unverified DIQ160 skip when DIQ160 unavailable.",
   "oral_medication_skip_not_independently_checkable_n": 4235,
   "no_labels_or_source_rows_written": true,
+  "path_base": "repository_root",
   "options": {
     "csv": "data/nhanes_diabetes_2021_2023_verified.csv",
     "out": "results/aim1",

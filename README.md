@@ -34,7 +34,7 @@ The Python script uses Python 3.10 or later. Install the dependencies with:
 python -m pip install -r requirements.txt
 ```
 
-Configure `DATA_FILE` at the top of `scripts/nhanes_hba1c_pycharm.py` to select the analysis input, and configure `OUTPUT_FOLDER` for new results. Absolute paths are supported; relative paths are resolved from the script directory. The script validates required columns and cohort rules before fitting models.
+The default analysis input is `data/nhanes_diabetes_2021_2023_verified.csv`. Configure `DATA_FILE` and `OUTPUT_FOLDER` at the top of `scripts/nhanes_hba1c_pycharm.py` when using another location. Relative paths are resolved from the repository root, independently of the working directory. Explicit absolute paths are also supported. New results are written to a timestamped directory under `results/aim1/`. The script validates required columns and cohort rules before fitting models.
 
 ```sh
 python scripts/nhanes_hba1c_pycharm.py
@@ -42,13 +42,15 @@ python scripts/nhanes_hba1c_pycharm.py
 
 ### R
 
-The survey analysis uses the R package `survey`. The script installs it from CRAN if it is not already available. An analysis input can be supplied explicitly:
+The survey analysis uses the R package `survey`. The script installs it from CRAN if it is not already available. Its default analysis input is also `data/nhanes_diabetes_2021_2023_verified.csv`:
 
 ```sh
-Rscript scripts/aim3_survey_analysis.R path/to/analysis_input.csv
+Rscript scripts/aim3_survey_analysis.R
 ```
 
-In this directory structure, the R script writes new outputs to `reports/aim3/`. The files under `results/` contain the saved project outputs.
+An optional first argument selects another analysis input. Relative paths, including that argument and `OUTPUT_FOLDER`, are resolved from the repository root. New outputs are written to a separate timestamped directory under `results/aim3/`.
+
+The files directly under `results/aim1/` and `results/aim3/` contain the saved project outputs. New runs use their own subdirectories. Repository-local paths recorded in `data_audit.json` are relative to the repository root; explicitly configured external paths retain their absolute location.
 
 ## Saved results
 
