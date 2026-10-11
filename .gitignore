@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+.Rhistory
+.RData
+.Rproj.user/
+results_balance_hba1c/
+scripts/results_balance_hba1c/
+reports/
+~$*.docx

@@ -1,0 +1,6 @@
+# Python package versions recorded with the saved Aim 1 outputs.
+numpy==2.5.2
+pandas==3.0.5
+scikit-learn==1.9.1
+matplotlib==3.11.1
+xgboost==3.4.1
