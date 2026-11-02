@@ -1,0 +1,13 @@
+状态：HBA1C_COHORT_INTERNAL_CHECKS_PASSED；quick=False
+分析人群：5026人，126阳性；未加权比例2.5070%；调查加权比例2.1955%。
+原始预测变量9个，编码后10列。
+只比较LR、RF、XGB；无ROS/RUS/SMOTE或额外类别权重。
+comparison.csv为外层折均值和SD；SD不是置信区间。pooled_metrics.csv为池化OOF指标，二者不必相同。
+外层排名仅作描述；最高分模型并没有获得独立的最终验证，小差异不代表显著胜出。
+阈值仅使用内层OOF确定；外层敏感度不保证达到80%。AP为average precision。
+Brier_reference为各外层训练集加权患病率常数预测的测试Brier；Brier_skill=1-Brier/Brier_reference，接近0表示改善有限。
+全队列患病率p的p(1-p)仅是描述性基线，不用于拟合测试参考预测。
+PSU分组CV不是完整设计型推断；没有设计型CI或外部验证。
+关键字段已核对上传原XPT；不代表所有用药或妊娠状态都可获知；详见审计。
+本版不执行Aim2、Aim3关联分析、SHAP或最终部署模型训练。
+QUICK_RUN=True仅用于功能检查，不能放入最终报告。

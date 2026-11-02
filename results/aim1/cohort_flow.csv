@@ -1,0 +1,15 @@
+stage,excluded,remaining
+input_merged_adults,0,6001
+under18_or_missing_age,0,6001
+self_reported_diabetes,820,5181
+diagnosis_unknown_or_missing,0,5181
+reported_diabetes_treatment,85,5096
+medication_refused_or_unknown,1,5095
+missing_pills_when_expected,0,5095
+unresolved_pills_skip,11,5084
+known_pregnancy,37,5047
+pregnancy_unknown_in_release_group,21,5026
+hba1c_missing_or_invalid,0,5026
+outcome_missing,0,5026
+weight_missing_nonpositive_or_invalid,0,5026
+survey_design_missing,0,5026

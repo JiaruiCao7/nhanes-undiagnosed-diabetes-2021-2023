@@ -1,0 +1,40 @@
+variable,group,statistic,n,missing_n,weighted_value,weighted_descriptive_sd
+age_years,All,mean,5026,0,46.2924808618744,17.845629676870427
+age_years,Outcome 0,mean,4900,0,46.04029317721415,17.832943698203266
+age_years,Outcome 1,mean,126,0,57.5269606448913,14.47698227616409
+waist_to_height_ratio,All,mean,4824,202,0.5860015299130366,0.09876173607023932
+waist_to_height_ratio,Outcome 0,mean,4703,197,0.5837710510862978,0.09783404388793526
+waist_to_height_ratio,Outcome 1,mean,121,5,0.6854359098982042,0.08817814460047033
+avg_systolic_bp_mmhg,All,mean,4869,157,120.03074090994744,16.562689834198082
+avg_systolic_bp_mmhg,Outcome 0,mean,4749,151,119.83087001915474,16.485785932094608
+avg_systolic_bp_mmhg,Outcome 1,mean,120,6,129.1047504357963,17.48017311779255
+hdl_cholesterol_mg_dl,All,mean,4793,233,54.298355871754545,14.404093514197536
+hdl_cholesterol_mg_dl,Outcome 0,mean,4670,230,54.4905873323293,14.42276454921258
+hdl_cholesterol_mg_dl,Outcome 1,mean,123,3,45.90268496186532,10.576849168235476
+total_cholesterol_mg_dl,All,mean,4793,233,189.20549347878773,40.84985273749593
+total_cholesterol_mg_dl,Outcome 0,mean,4670,230,189.07568861624287,40.52221279605044
+total_cholesterol_mg_dl,Outcome 1,mean,123,3,194.87469510255758,52.91726759590258
+family_income_poverty_ratio,All,mean,4387,639,3.063485845307186,1.6382998459590594
+family_income_poverty_ratio,Outcome 0,mean,4275,625,3.0757654011967084,1.6412168788914092
+family_income_poverty_ratio,Outcome 1,mean,112,14,2.520772609243957,1.4000073566910043
+has_health_insurance,All,proportion 0,460,12,0.10341438763123831,
+has_health_insurance,All,proportion 1,4554,12,0.8965856123687618,
+has_health_insurance,Outcome 0,proportion 0,443,11,0.10218162151850405,
+has_health_insurance,Outcome 0,proportion 1,4446,11,0.897818378481496,
+has_health_insurance,Outcome 1,proportion 0,17,1,0.1586150451890705,
+has_health_insurance,Outcome 1,proportion 1,108,1,0.8413849548109293,
+sex,All,proportion female,2763,0,0.5105857522152725,
+sex,All,proportion male,2263,0,0.4894142477847274,
+sex,Outcome 0,proportion female,2704,0,0.5122700695664314,
+sex,Outcome 0,proportion male,2196,0,0.48772993043356866,
+sex,Outcome 1,proportion female,59,0,0.4355526305334177,
+sex,Outcome 1,proportion male,67,0,0.5644473694665821,
+smoking_status,All,proportion never,3110,8,0.6446972718193762,
+smoking_status,All,proportion former,1209,8,0.21583930185248956,
+smoking_status,All,proportion current,699,8,0.13946342632813433,
+smoking_status,Outcome 0,proportion never,3042,8,0.646628469153773,
+smoking_status,Outcome 0,proportion former,1169,8,0.21414776156359072,
+smoking_status,Outcome 0,proportion current,681,8,0.1392237692826362,
+smoking_status,Outcome 1,proportion never,68,0,0.5588063429269792,
+smoking_status,Outcome 1,proportion former,40,0,0.2910713685526035,
+smoking_status,Outcome 1,proportion current,18,0,0.1501222885204172,
